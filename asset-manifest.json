@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/greeting-card-maker-app/static/css/main.64659168.chunk.css",
+    "main.js": "/greeting-card-maker-app/static/js/main.12878466.chunk.js",
+    "main.js.map": "/greeting-card-maker-app/static/js/main.12878466.chunk.js.map",
+    "runtime-main.js": "/greeting-card-maker-app/static/js/runtime-main.823873ae.js",
+    "runtime-main.js.map": "/greeting-card-maker-app/static/js/runtime-main.823873ae.js.map",
+    "static/js/2.cdd1d8e8.chunk.js": "/greeting-card-maker-app/static/js/2.cdd1d8e8.chunk.js",
+    "static/js/2.cdd1d8e8.chunk.js.map": "/greeting-card-maker-app/static/js/2.cdd1d8e8.chunk.js.map",
+    "static/js/3.9ac63f47.chunk.js": "/greeting-card-maker-app/static/js/3.9ac63f47.chunk.js",
+    "static/js/3.9ac63f47.chunk.js.map": "/greeting-card-maker-app/static/js/3.9ac63f47.chunk.js.map",
+    "index.html": "/greeting-card-maker-app/index.html",
+    "static/css/main.64659168.chunk.css.map": "/greeting-card-maker-app/static/css/main.64659168.chunk.css.map",
+    "static/js/2.cdd1d8e8.chunk.js.LICENSE.txt": "/greeting-card-maker-app/static/js/2.cdd1d8e8.chunk.js.LICENSE.txt",
+    "static/media/index.css": "/greeting-card-maker-app/static/media/edit-icon.9785f1fb.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.823873ae.js",
+    "static/js/2.cdd1d8e8.chunk.js",
+    "static/css/main.64659168.chunk.css",
+    "static/js/main.12878466.chunk.js"
+  ]
+}
