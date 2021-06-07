@@ -1,0 +1,265 @@
+body {
+	background-color: #F1F1F1;
+	margin: 0px;
+	padding: 0px;
+}
+div.editable {
+	background: transparent;
+    outline: none;
+    border: none;
+	text-align: center;
+	font-size: 20px;
+	max-width: 90vw;
+}
+.absolute {
+	position: absolute;
+}
+.fixed {
+	position: fixed;
+}
+.top-margin {
+	top: 10px;
+}
+.bottom-margin {
+	bottom: 10px;
+}
+.left-margin {
+	left: 10px;
+}
+.right-margin {
+	right: 10px;
+}
+.background-size {
+	left: 50%;
+	transform: translateX(-50%);
+    z-index: 100;
+    font-weight: bold;
+    margin-top: 5px;
+    padding: 10px;
+    background-color: lightskyblue;
+    border-radius: 20px;
+}
+.display-none {
+	display: none;
+}
+.pointer {
+	cursor: pointer;
+}
+.greeting-container {
+	width: 100vw;
+    height: 100vh;
+	display: flex;
+    justify-content: center;
+    align-items: center;
+	margin: auto;
+}
+.greeting-background {
+	position: relative;
+}
+.round-button {
+	padding: 8px;
+    border-radius: 50%;
+    background-color: lightskyblue;
+	border: none;
+    outline: none;
+}
+[class*="button"] {
+    cursor: pointer;
+	display: inline-block;
+	vertical-align: middle;
+	margin: 5px;
+}
+.color-button {
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	border-width: 3px;
+    border-style: solid;
+}
+.overlay {
+	background: rgba(0, 0, 0, 0.2);
+    top: 0px;
+    left: 0px;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+	z-index: 100;
+}
+.screen-center {
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.config-container {
+	position: fixed;
+	text-align: center;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+}
+.config-background {
+	padding-top: 20px;
+    border-radius: 30px;
+    background-color: rgba(0, 0, 0, 0.5);
+	color: rgba(255, 255, 255, 0.5);
+}
+.config-menu-container {
+	background-color: #333333;
+	padding: 5px;
+}
+.config-menu-container div{
+	display: inline-block;
+	vertical-align: middle;
+	margin: 5px 10px;
+	color: rgba(255, 255, 255, 0.5);
+	padding-bottom: 3px;
+	border-bottom: 3px solid transparent;
+	cursor: pointer;
+}
+.config-menu-container div.selected{
+	color: rgba(255, 255, 255, 1);
+	border-bottom: 3px solid #FFFFFF;
+}
+.font-picker-container {
+	font-size: 20px;
+}
+.font-style-button {
+	font-style: italic;
+    padding: 3px 10px;
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.selected {
+	color: rgba(255, 255, 255, 1);
+}
+.font-style-button.selected {
+	border: 1px solid rgba(255, 255, 255, 1);
+}
+.range-container {
+	margin: 5px 20px;
+}
+.range-container input {
+	width: 100%;
+}
+.border-solid-button {
+	border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+}
+.border-dotted-button {
+	border-bottom: 2px dotted rgba(255, 255, 255, 0.5);
+}
+.border-dashed-button {
+	border-bottom: 2px dashed rgba(255, 255, 255, 0.5);
+}
+.border-double-button {
+	border-bottom: 2px double rgba(255, 255, 255, 0.5);
+}
+.border-solid-button.selected {
+	border-bottom: 2px solid rgba(255, 255, 255, 1);
+}
+.border-dotted-button.selected {
+	border-bottom: 2px dotted rgba(255, 255, 255, 1);
+}
+.border-dashed-button.selected {
+	border-bottom: 2px dashed rgba(255, 255, 255, 1);
+}
+.border-double-button.selected {
+	border-bottom: 2px double rgba(255, 255, 255, 1);
+}
+.add-background-icon {
+	width: 25px;
+    height: 25px;
+    background-image: url("./icons/add-background-icon.png");
+    background-position: center;
+    background-size: contain;
+}
+.add-image-icon {
+	width: 25px;
+    height: 25px;
+    background-image: url("./icons/image-icon.png");
+    background-position: center;
+    background-size: contain;
+}
+.add-text-icon {
+	width: 25px;
+    height: 25px;
+    background-image: url("./icons/add-text-icon.png");
+    background-position: center;
+    background-size: contain;
+}
+.save-icon {
+	width: 25px;
+    height: 25px;
+    background-image: url("./icons/save-icon.png");
+    background-position: center;
+    background-size: contain;
+}
+.add-icon {
+	width: 25px;
+    height: 25px;
+    background-image: url("./icons/add-icon.png");
+    background-position: center;
+    background-size: contain;
+}
+.ok-icon {
+	width: 25px;
+    height: 25px;
+    background-image: url("./icons/ok-icon.png");
+    background-position: center;
+    background-size: contain;
+}
+.cancel-icon {
+	width: 25px;
+    height: 25px;
+    background-image: url("./icons/cancel-icon.png");
+    background-position: center;
+    background-size: contain;
+}
+.edit-icon {
+	width: 25px;
+    height: 25px;
+    background-image: url("./icons/edit-icon.png");
+    background-position: center;
+    background-size: contain;
+}
+.delete-icon {
+	width: 25px;
+    height: 25px;
+    background-image: url("./icons/delete-icon.png");
+    background-position: center;
+    background-size: contain;
+}
+.left-align-button {
+	width: 30px;
+    height: 30px;
+	background-image: url("./icons/left-align-icon.png");
+	background-size: contain;
+	opacity: 0.4;
+}
+.right-align-button {
+	width: 30px;
+    height: 30px;
+	background-image: url("./icons/right-align-icon.png");
+	background-size: contain;
+	opacity: 0.4;
+}
+.center-align-button {
+	width: 30px;
+    height: 30px;
+	background-image: url("./icons/center-align-icon.png");
+	background-size: contain;
+	opacity: 0.4;
+}
+.left-align-button.selected, .center-align-button.selected, .right-align-button.selected {
+	opacity: 1;
+}
+.color-button.selected {
+	border-color: #FFFFFF !important;
+}
+.draggable {
+	cursor: grab;
+}
+.draggable.grabbing {
+	cursor: grabbing;
+}
+@import url('https://fonts.googleapis.com/css2?family=Caveat&family=Codystar&family=Comfortaa&family=Crafty+Girls&family=Dancing+Script&family=Limelight&family=Lobster&family=Pacifico&family=Permanent+Marker&family=Source+Code+Pro&display=swap');
