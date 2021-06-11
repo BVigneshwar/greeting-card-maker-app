@@ -398,6 +398,8 @@ div.editable {
 	padding-top: 5px;
     background: #555555;
     color: rgba(255, 255, 255, 0.5);
+}
+.image-thumbnail-container {
 	white-space: nowrap;
     overflow-x: auto;
 }

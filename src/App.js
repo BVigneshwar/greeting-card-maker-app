@@ -1026,7 +1026,9 @@ class ImageFilterComponent extends React.Component {
 				<img className="main-image-filter" src={this.props.data.image} alt="error" style={{filter : mergeFilterStyle(this.state)}}/>
 				<div className="image-filter-config-container">
 					{this.state.selectedOption && <RangeComponent name="style" property={this.state.selectedOption} label={rangeConfig.label} value={rangeValue} convertToPercent="true" suffix="%" min={rangeConfig.min} max={rangeConfig.max} handleChange={this.handleChange} /> }
-					{thumbnailConfig}
+					<div className="image-thumbnail-container">
+						{thumbnailConfig}
+					</div>
 				</div>
 			</div>
 		);
