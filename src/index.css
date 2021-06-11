@@ -1,7 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat&family=Codystar&family=Comfortaa&family=Cookie&family=Courgette&family=Crafty+Girls&family=Dancing+Script&family=Gloria+Hallelujah&family=Handlee&family=Limelight&family=Lobster&family=Luckiest+Guy&family=Monoton&family=Pacifico&family=Permanent+Marker&family=Sacramento&family=Source+Code+Pro&display=swap');
+html, body {
+	height: 100%;
+	overflow: hidden
+}
+body ::-webkit-scrollbar { display: none; -webkit-appearance: none; }
 body {
 	background-color: #F1F1F1;
 	margin: 0px;
 	padding: 0px;
+	scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 div.editable {
 	background: transparent;
@@ -36,8 +44,12 @@ div.editable {
     font-weight: bold;
     margin-top: 5px;
     padding: 10px;
-    background-color: lightskyblue;
+    background-image: linear-gradient(#9575CD, #4DD0E1);
+    box-shadow: 2px 2px 4px #555555;
     border-radius: 20px;
+}
+.background-size:active {
+	box-shadow: 2px 2px 2px #555555;
 }
 .display-none {
 	display: none;
@@ -59,9 +71,14 @@ div.editable {
 .round-button {
 	padding: 8px;
     border-radius: 50%;
-    background-color: lightskyblue;
+    background-image: linear-gradient(#9575CD, #4DD0E1);
+    box-shadow: 2px 2px 4px #555555;
 	border: none;
     outline: none;
+	z-index: 100;
+}
+.round-button:active {
+	box-shadow: 2px 2px 2px #555555;
 }
 [class*="button"] {
     cursor: pointer;
@@ -123,9 +140,10 @@ div.editable {
 }
 .font-picker-container {
 	font-size: 20px;
+	white-space: nowrap;
+    overflow-x: auto;
 }
 .font-style-button {
-	font-style: italic;
     padding: 3px 10px;
     border-radius: 25px;
     border: 1px solid rgba(255, 255, 255, 0.5);
@@ -137,10 +155,26 @@ div.editable {
 	border: 1px solid rgba(255, 255, 255, 1);
 }
 .range-container {
-	margin: 5px 20px;
+	width: 100%;
+    display: flex;
+    flex-direction: row;
+	margin: 10px 20px;
+}
+.range-label {
+	flex-grow: 1;
+	flex-basis: 0;
+    text-align: right;
+    margin-right: 10px;
 }
 .range-container input {
-	width: 100%;
+	flex-grow: 8;
+	flex-basis: 0;
+}
+.range-value {
+	flex-grow: 1;
+	flex-basis: 0;
+    margin-left: 10px;
+    text-align: left;
 }
 .border-solid-button {
 	border-bottom: 2px solid rgba(255, 255, 255, 0.5);
@@ -250,6 +284,20 @@ div.editable {
 	background-size: contain;
 	opacity: 0.4;
 }
+.left-scroll-button {
+	width: 20px;
+    height: 20px;
+	background-image: url("./icons/left-scroll.png");
+	background-size: contain;
+	opacity: 0.4;
+}
+.right-scroll-button {
+	width: 20px;
+    height: 20px;
+	background-image: url("./icons/right-scroll.png");
+	background-size: contain;
+	opacity: 0.4;
+}
 .left-align-button.selected, .center-align-button.selected, .right-align-button.selected {
 	opacity: 1;
 }
@@ -262,4 +310,112 @@ div.editable {
 .draggable.grabbing {
 	cursor: grabbing;
 }
-@import url('https://fonts.googleapis.com/css2?family=Caveat&family=Codystar&family=Comfortaa&family=Crafty+Girls&family=Dancing+Script&family=Limelight&family=Lobster&family=Pacifico&family=Permanent+Marker&family=Source+Code+Pro&display=swap');
+.color-picker-wrapper {
+	margin: 5px 0px;
+}
+.color-picker-container {
+	display: inline-block;
+    vertical-align: middle;
+	width: calc(100% - 100px);
+    white-space: nowrap;
+    overflow-x: auto;
+    margin: auto;
+}
+.right-scroll-button.highlight, .left-scroll-button.highlight {
+	opacity: 1;
+}
+.color-style-button {
+	padding: 3px 10px;
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.no-color-icon-button {
+	background-image: url("./icons/no-color-icon.png");
+	background-size: cover;
+    background-position: center;
+	height: 26px;
+    width: 26px;
+    border: 3px solid red;
+    border-radius: 50%;
+}
+.no-color-icon-button.selected {
+	border-color: #FFFFFF;
+}
+.color-style-button.selected {
+	border: 1px solid rgba(255, 255, 255, 1);
+}
+.color-style-button div {
+	display: inline-block;
+    vertical-align: middle;
+}
+.color-style-button .color-button {
+	background-size: cover;
+	width: 15px;
+    height: 15px;
+    border-radius: 50%;
+	margin: 0px;
+    margin-right: 5px;
+	border: none;
+}
+.font-image {
+	display: inline-block;
+    border: 2px dashed rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    margin: 5px auto;
+}
+.before {
+	position : absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: -1;
+	background-size: cover;
+    background-position: center;
+}
+.background-font {
+	background-size: cover;
+	-webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.image-button {
+	width: 50px;
+    height: 50px;
+}
+.main-image-filter{
+	position: absolute;
+    top: calc(50% - 75px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+	height: 50vh;
+}
+.image-filter-config-container {
+	position: fixed;
+	text-align: center;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	padding-top: 5px;
+    background: #555555;
+    color: rgba(255, 255, 255, 0.5);
+	white-space: nowrap;
+    overflow-x: auto;
+}
+.image-thumbnail {
+	display: inline-block;
+	vertical-align: middle;
+	margin: 10px 5px;
+	cursor: pointer;
+}
+.image-thumbnail img {
+	width: 75px;
+	height: 75px;
+	border-radius: 5px;
+	border: 1px solid transparent;
+}
+.image-thumbnail.selected img {
+	border: 1px solid #FFFFFF;
+}
+.image-thumbnail div{
+	display: block;
+}
