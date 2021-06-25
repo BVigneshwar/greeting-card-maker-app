@@ -19,6 +19,10 @@ function loadImage(file, onload) {
 	}
 }
 
+function preventDefault(event) {
+	event.preventDefault();
+}
+
 
 class App extends React.Component {
 	constructor(props) {
@@ -42,6 +46,12 @@ class App extends React.Component {
 		this.handleDraggableClick = this.handleDraggableClick.bind(this);
 		this.handleTextSave = this.handleTextSave.bind(this);
 		this.handleImageSave = this.handleImageSave.bind(this);
+		
+		this.state.touchDiff = 0;
+		this.appElem = React.createRef();
+		this.handleTouchStart = this.handleTouchStart.bind(this);
+		this.handleTouchMove = this.handleTouchMove.bind(this);
+		this.handleTouchEnd = this.handleTouchEnd.bind(this);
 	}
 	
 	handleChange(event) {
@@ -87,7 +97,7 @@ class App extends React.Component {
 					let image = {
 						id : ""+Date.now(),
 						style : {
-							width : "100px",
+							width : 1,
 							transform : "rotate(0deg)"
 						},
 						filter : {
@@ -101,6 +111,12 @@ class App extends React.Component {
 							opacity : "100%",
 							saturate : "1",
 							sepia : "0%"
+						},
+						crop : {
+							top : "0px",
+							left : "0px",
+							right : "0px",
+							bottom : "0px"
 						},
 						image : response
 					};
@@ -155,7 +171,7 @@ class App extends React.Component {
 				selectedDraggable = this.state.imageArray.find((image) => image.id === this.state.selectedDraggable );
 				let imageArray = copyOf(this.state.imageArray).map((image) => {
 					if(image.id === this.state.selectedDraggable) {
-						image.style.width = event.target.value + "px";
+						image.style.width = event.target.value;
 					}
 					return image;
 				});
@@ -248,6 +264,71 @@ class App extends React.Component {
 		}
 	}
 	
+	componentDidMount() {
+		document.body.addEventListener("touchmove", preventDefault);
+	}
+	
+	componentWillUnmount() {
+		document.body.removeEventListener("touchmove", preventDefault);
+	}
+	
+	handleTouchStart(event) {
+		if(this.state.selectedDraggable && event.touches.length == 2) {
+			let pos1 = event.touches[0].clientY;
+			let pos2 = event.touches[1].clientY;
+			let diff = pos1 > pos2 ? parseInt(pos1 - pos2) : parseInt(pos2 - pos1);
+			this.setState({ touchDiff : diff });
+			this.appElem.current.ontouchmove = this.handleTouchMove;
+			this.appElem.current.ontouchend = this.handleTouchEnd;
+		}
+	}
+	
+	handleTouchMove(event) {
+		if(this.state.selectedDraggable && event.touches.length == 2) {
+			let pos1 = event.touches[0].clientY;
+			let pos2 = event.touches[1].clientY;
+			let currDiff = pos1 > pos2 ? parseInt(pos1 - pos2) : parseInt(pos2 - pos1);
+			let diff = currDiff - this.state.touchDiff;
+			let selectedDraggable = this.state.textArray.find((text) => text.id === this.state.selectedDraggable );
+			if(selectedDraggable) {
+				let textArray = copyOf(this.state.textArray).map((text) => {
+					if(text.id === this.state.selectedDraggable) {
+						let value = parseInt(text.style.fontSize) + diff;
+						if(value < 5) {
+							value = 5;
+						}else if(value > 100) {
+							value = 100;
+						}
+						text.style.fontSize = value + "px";
+					}
+					return text;
+				});
+				this.setState({ textArray : textArray, touchDiff : currDiff });
+			}
+			if(!selectedDraggable) {
+				selectedDraggable = this.state.imageArray.find((image) => image.id === this.state.selectedDraggable );
+				let imageArray = copyOf(this.state.imageArray).map((image) => {
+					if(image.id === this.state.selectedDraggable) {
+						let value = parseFloat(image.style.width) + diff/10000;
+						if(value < 0.2) {
+							value = 0.5;
+						}else if(value > 2) {
+							value = 2;
+						}
+						image.style.width = value;
+					}
+					return image;
+				});
+				this.setState({ imageArray : imageArray });
+			}
+		}
+	}
+	
+	handleTouchEnd() {
+		this.appElem.current.ontouchmove = null;
+		this.appElem.current.ontouchend = null;
+	}
+	
 	render() {
 		var [width, height] = this.state.backgroundSize.split(" x ");
 		if(document.body.offsetWidth < document.body.offsetHeight) {
@@ -268,8 +349,8 @@ class App extends React.Component {
 			backgroundPosition : "center"
 		}
 		
-		let textElements = this.state.textArray.map((data) => <DraggableComponent key={data.id} id={data.id} container={this.container} handleDraggableClick={this.handleDraggableClick} style={data.style} fontColorStyle={data.fontColorStyle} fontGradientColor={data.fontGradientColor} fontImage={data.fontImage} backgroundColorStyle={data.backgroundColorStyle} backgroundGradientColor={data.backgroundGradientColor} backgroundImage={data.backgroundImage} text={data.text} /> );
-		let imageElements = this.state.imageArray.map((data) => <DraggableComponent key={data.id} id={data.id} container={this.container} handleDraggableClick={this.handleDraggableClick} style={data.style} filter={data.filter} image={data.image} /> );
+		let textElements = this.state.textArray.map((data) => <DraggableComponent key={data.id} id={data.id} selected={data.id === this.state.selectedDraggable} container={this.container} handleDraggableClick={this.handleDraggableClick} style={data.style} fontColorStyle={data.fontColorStyle} fontGradientColor={data.fontGradientColor} fontImage={data.fontImage} backgroundColorStyle={data.backgroundColorStyle} backgroundGradientColor={data.backgroundGradientColor} backgroundImage={data.backgroundImage} text={data.text} /> );
+		let imageElements = this.state.imageArray.map((data) => <DraggableComponent key={data.id} id={data.id} selected={data.id === this.state.selectedDraggable} container={this.container} handleDraggableClick={this.handleDraggableClick} style={data.style} filter={data.filter} crop={data.crop} image={data.image} /> );
 		
 		let selectedDraggable, selectedImage = false;
 		if(this.state.selectedDraggable) {
@@ -283,7 +364,7 @@ class App extends React.Component {
 		}
 		
 		return (
-			<div className="App">
+			<div className="App" ref={this.appElem} onTouchStart={this.handleTouchStart}>
 				<button data-name="addBackground" className="absolute top-margin left-margin round-button" onClick={this.handleChange}>
 					<div data-name="addBackground" className="add-background-icon"></div>
 				</button>
@@ -333,9 +414,9 @@ class App extends React.Component {
 					</div>
 				</div>
 				
-				{ this.state.addTextOverlay && (selectedImage ? <ImageFilterComponent data={selectedDraggable} onSave={this.handleImageSave} /> : <TextComponent data={selectedDraggable} onSave={this.handleTextSave}/>) }
+				{ this.state.addTextOverlay && (selectedImage ? <ImageConfigComponent data={selectedDraggable} onSave={this.handleImageSave} /> : <TextComponent data={selectedDraggable} onSave={this.handleTextSave}/>) }
 				{ this.state.backgroundColorOverlay && <BackgroundConfigComponent backgroundColor={this.state.backgroundColor} backgroundImageSize={this.state.backgroundImageSize} handleChange={this.handleChange} /> }
-				{ !this.state.addTextOverlay && this.state.selectedDraggable &&  selectedDraggable && <DraggableConfigComponent rotate={selectedDraggable.style.transform} size={selectedDraggable.style.fontSize ? selectedDraggable.style.fontSize : selectedDraggable.style.width} maxSize={selectedDraggable.style.fontSize ? "50" : this.container.current.offsetWidth/2} handleChange={this.handleChange} /> }
+				{ !this.state.addTextOverlay && this.state.selectedDraggable &&  selectedDraggable && <DraggableConfigComponent rotate={selectedDraggable.style.transform} size={selectedDraggable.style.fontSize ? selectedDraggable.style.fontSize.replace("px", "") : selectedDraggable.style.width} maxSize={selectedDraggable.style.fontSize ? "50" : "2"} minSize={selectedDraggable.style.fontSize ? "1" : "0.2"} step={selectedDraggable.style.fontSize ? "1" : "0.1"} handleChange={this.handleChange} /> }
 			</div>
 		);
 	}
@@ -360,7 +441,7 @@ class DraggableConfigComponent extends React.Component {
 		return (
 			<div className="config-container" style={{right : "80px"}}>
 				<div className="draggable-config-container">
-					<RangeComponent name="size" label="Size" value={this.props.size.replace("px", "")} convertToPercent="true" suffix="%" min="1" max={this.props.maxSize} handleChange={this.props.handleChange} />
+					<RangeComponent name="size" label="Size" value={this.props.size} convertToPercent="true" suffix="%" min={this.props.minSize} max={this.props.maxSize} step={this.props.step} handleChange={this.props.handleChange} />
 					<RangeComponent name="rotate" label="Rotate" value={this.props.rotate.replace("rotate(", "").replace("deg)", "")} suffix="deg" min="-180" max="180" handleChange={this.props.handleChange} />
 				</div>
 			</div>
@@ -372,15 +453,20 @@ class DraggableComponent extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
-			pos1 : 0,
-			pos2 : 0,
-			pos3 : 0,
-			pos4 : 0
+			currX : 0,
+			currY : 0,
+			prevX : 0,
+			prevY : 0
 		};
 		this.elem = React.createRef();
 		this.handleMouseDown = this.handleMouseDown.bind(this);
 		this.handleDrag = this.handleDrag.bind(this);
 		this.handleMouseUp = this.handleMouseUp.bind(this);
+		
+		this.leftLineElem = React.createRef();
+		this.topLineElem = React.createRef();
+		this.rightLineElem = React.createRef();
+		this.bottomLineElem = React.createRef();
 	}
 	
 	handleMouseDown(event) {
@@ -390,24 +476,25 @@ class DraggableComponent extends React.PureComponent {
 		this.props.container.current.onmousemove = this.handleDrag;
 		this.props.container.current.ontouchend = this.handleMouseUp;
 		this.props.container.current.ontouchmove = this.handleDrag;
-		if(event.type === "touchstart") {
+		if(event.type === "touchstart" && event.touches.length === 1) {
 			event = event.touches[0] || event.changedTouches[0];
 		}
-		this.setState({ pos3 : event.clientX, pos4 : event.clientY});
+		this.setState({ prevX : event.clientX, prevY : event.clientY});
 		this.elem.current.classList.add("grabbing");
+		this.props.handleDraggableClick(this.elem.current.id);
 	}
 	
 	handleDrag(event) {
-		event.preventDefault();
+		//event.preventDefault();
 		event.stopPropagation();
-		if(event.type === "touchmove") {
+		if(event.type === "touchmove" && event.touches.length === 1) {
 			event = event.touches[0] || event.changedTouches[0];
 		}
-		let pos1 = this.state.pos3 - event.clientX;
-		let pos2 = this.state.pos4 - event.clientY;
-		let pos3 = event.clientX;
-		let pos4 = event.clientY;
-		this.setState({pos1 : pos1, pos2 : pos2, pos3 : pos3, pos4 : pos4});
+		let currX = this.state.prevX - event.clientX;
+		let currY = this.state.prevY - event.clientY;
+		let prevX = event.clientX;
+		let prevY = event.clientY;
+		this.setState({currX : currX, currY : currY, prevX : prevX, prevY : prevY});
 	}
 	
 	handleMouseUp(event) {
@@ -418,25 +505,25 @@ class DraggableComponent extends React.PureComponent {
 		this.props.container.current.ontouchend = null;
 		this.props.container.current.ontouchmove = null;
 		this.elem.current.classList.remove("grabbing");
-		this.props.handleDraggableClick(this.elem.current.id);
+		//this.props.handleDraggableClick(this.elem.current.id);
 	}
 	
 	getSnapshotBeforeUpdate(prevProps, prevState) {
-		if(this.state.pos1 !== prevState.pos1 || this.state.pos2 !== prevState.pos2) {
+		//if(this.state.currX !== prevState.currX || this.state.currY !== prevState.currY) {
 			return {
-				top : this.elem.current.offsetTop - this.state.pos2,
-				left : this.elem.current.offsetLeft - this.state.pos1,
+				top : this.elem.current.offsetTop - this.state.currY,
+				left : this.elem.current.offsetLeft - this.state.currX,
 				width : this.elem.current.offsetWidth,
 				height : this.elem.current.offsetHeight,
 				containerWidth : this.props.container.current.offsetWidth,
 				containerHeight : this.props.container.current.offsetHeight
 			};
-		}
-		return null;
+		//}
+		//return null;
 	}
 	
 	componentDidUpdate(prevProps, prevState, snapshot) {
-		if(snapshot) {
+		if(snapshot && (this.state.currX !== prevState.currX || this.state.currY !== prevState.currY)) {
 			if(snapshot.left < 0) {
 				snapshot.left = 0;
 			}
@@ -452,6 +539,23 @@ class DraggableComponent extends React.PureComponent {
 			this.elem.current.style.top = (snapshot.top*100/snapshot.containerHeight) + "%";
 			this.elem.current.style.left = (snapshot.left*100/snapshot.containerWidth) + "%";
 		}
+		if(this.props.selected) {
+			this.leftLineElem.current.style.top = (snapshot.top + snapshot.height/2) + "px";
+			this.leftLineElem.current.style.width = snapshot.left + "px";
+			this.leftLineElem.current.innerText = parseInt(snapshot.left) + "px";
+			
+			this.topLineElem.current.style.left = (snapshot.left + snapshot.width/2) + "px";
+			this.topLineElem.current.style.height = snapshot.top + "px";
+			this.topLineElem.current.innerHTML = "<div>"+ parseInt(snapshot.top) + "px</div>";
+			
+			this.rightLineElem.current.style.top = (snapshot.top + snapshot.height/2) + "px";
+			this.rightLineElem.current.style.width = (snapshot.containerWidth - snapshot.left - snapshot.width) + "px";
+			this.rightLineElem.current.innerText = parseInt(snapshot.containerWidth - snapshot.left - snapshot.width) + "px";
+			
+			this.bottomLineElem.current.style.left = (snapshot.left + snapshot.width/2) + "px";
+			this.bottomLineElem.current.style.height = (snapshot.containerHeight - snapshot.top - snapshot.height) + "px";
+			this.bottomLineElem.current.innerHTML = "<div>" + parseInt(snapshot.containerHeight - snapshot.top - snapshot.height) + "px</div>";
+		}
 	}
 	
 	componentDidMount() {
@@ -461,35 +565,56 @@ class DraggableComponent extends React.PureComponent {
 	
 	render() {
 		let elem = null;
-		
+		debugger
 		if(this.props.image) {
-			elem = (
-				<div id={this.props.id} style={{ transform : this.props.style.transform }} className="absolute draggable" onMouseDown={this.handleMouseDown} onTouchStart={this.handleMouseDown} ref={this.elem}>
-					<img className="draggable" style={{ width : this.props.style.width, filter : mergeFilterStyle(this.props.filter)}} src={this.props.image} alt="error"/>
+			elem = (<>
+				<div id={this.props.id} style={{ transform : this.props.style.transform }} className={this.props.selected ? "draggable-selected absolute draggable" : "absolute draggable"} onMouseDown={this.handleMouseDown} onTouchStart={this.handleMouseDown} ref={this.elem}>
+					<div className="draggable overflow-hidden" style={{transform : "scale("+this.props.style.width+")"}}>
+						<img className="draggable" style={{ filter : mergeFilterStyle(this.props.filter), margin : mergeCropStyle(this.props.crop)}} src={this.props.image} alt="error"/>
+						<div className="draggable selected-overlay"></div>
+					</div>
 				</div>
-			);
+				{ this.props.selected && 
+					<>
+						<div ref={this.leftLineElem} className="left-dotted-line"></div>
+						<div ref={this.topLineElem} className="top-dotted-line"></div>	
+						<div ref={this.rightLineElem} className="right-dotted-line"></div>
+						<div ref={this.bottomLineElem} className="bottom-dotted-line"></div>
+					</>
+				}
+			</>);
 		} else if(this.props.text) {
 			
-			let {fontSize, transform, backgroundColor, borderColor, borderWidth, borderStyle, borderRadius, ...style} = this.props.style;
+			let {fontSize, transform, backgroundColor, borderColor, borderWidth, borderStyle, borderRadius, textShadow, ...style} = this.props.style;
 			if(this.props.fontColorStyle === "gradient") {
 				style.backgroundImage = this.props.fontGradientColor;
 			}else if(this.props.fontColorStyle === "image") {
 				style.backgroundImage = this.props.fontImage;
 			}
-			let beforeStyle = {backgroundColor, borderColor, borderWidth, borderStyle, borderRadius};
+			let backgroundStyle = {backgroundColor, borderColor, borderWidth, borderStyle, borderRadius};
 			if(this.props.backgroundColorStyle === "gradient") {
-				beforeStyle.backgroundImage = this.props.backgroundGradientColor;
+				backgroundStyle.backgroundImage = this.props.backgroundGradientColor;
 			}else if(this.props.backgroundColorStyle === "image") {
-				beforeStyle.backgroundImage = this.props.backgroundImage;
+				backgroundStyle.backgroundImage = this.props.backgroundImage;
 			}
-			elem = (
-				<div id={this.props.id} style={{fontSize, transform}} className="absolute draggable" onMouseDown={this.handleMouseDown} onTouchStart={this.handleMouseDown} ref={this.elem}>
+			elem = ( <>
+				<div id={this.props.id} style={{fontSize, transform}} className={this.props.selected ? "draggable-selected absolute draggable" : "absolute draggable"} onMouseDown={this.handleMouseDown} onTouchStart={this.handleMouseDown} ref={this.elem}>
 					<div style={style} className={this.props.fontColorStyle !== "normal" ? "background-font draggable" : "draggable"}>
-						<div className="before draggable" style={beforeStyle}></div>
+						<div className="text-background" style={backgroundStyle}></div>
+						<div style={{textShadow : textShadow, padding : style.padding}} className="text-shadow">{this.props.text}</div>
 						<div className="draggable">{this.props.text}</div>
+						<div className="draggable selected-overlay"></div>
 					</div>
 				</div>
-			);
+				{ this.props.selected && 
+					<>
+						<div ref={this.leftLineElem} className="left-dotted-line"></div>
+						<div ref={this.topLineElem} className="top-dotted-line"></div>	
+						<div ref={this.rightLineElem} className="right-dotted-line"></div>
+						<div ref={this.bottomLineElem} className="bottom-dotted-line"></div>
+					</>
+				}
+			</> );
 			
 		}
 		
@@ -514,7 +639,7 @@ class TextComponent extends React.Component {
 				textDecoration : "none",
 				textShadow : "1px 1px 2px transparent",
 				backgroundColor : "transparent",
-				padding : "0px",
+				padding : "3px",
 				borderColor : "transparent",
 				borderStyle : "solid",
 				borderWidth : "0px",
@@ -667,45 +792,24 @@ class InputTextComponent extends React.Component {
 	}
 	
 	render() {
-		let {backgroundColor, borderColor, borderWidth, borderStyle, borderRadius, ...style} = this.props.style;
-		/*let beforeElem = document.createElement("div");
-		beforeElem.classList.add("before");
-		beforeElem.style.backgroundColor = backgroundColor;
-		let html = document.createElement("div");
-		html.appendChild(document.createTextNode(this.props.text));
-		html.appendChild(beforeElem);
-		html.style.position = "relative";
-		for(let prop in style) {
-			html.style[prop] = style[prop];
-		}
-		if(this.props.fontColorStyle === "gradient") {
-			html.classList.add("background-font");
-			html.style.backgroundImage = this.props.fontGradientColor;
-		}else if(this.props.fontColorStyle === "image") {
-			html.classList.add("background-font");
-			html.style.backgroundImage = this.props.fontImage;
-		}
-		return (
-			<div className="input-text-wrapper">
-				<ContentEditable className="editable" ref={this.textField} onChange={this.props.handleTextChange} html={html.outerHTML}/>
-			</div>
-		);*/
+		let {backgroundColor, borderColor, borderWidth, borderStyle, borderRadius, textShadow, ...style} = this.props.style;
 		
 		if(this.props.fontColorStyle === "gradient") {
 			style.backgroundImage = this.props.fontGradientColor;
 		}else if(this.props.fontColorStyle === "image") {
 			style.backgroundImage = this.props.fontImage;
 		}
-		let beforeStyle = {backgroundColor, borderColor, borderWidth, borderStyle, borderRadius};
+		let backgroundStyle = {backgroundColor, borderColor, borderWidth, borderStyle, borderRadius};
 		if(this.props.backgroundColorStyle === "gradient") {
-			beforeStyle.backgroundImage = this.props.backgroundGradientColor;
+			backgroundStyle.backgroundImage = this.props.backgroundGradientColor;
 		}else if(this.props.backgroundColorStyle === "image") {
-			beforeStyle.backgroundImage = this.props.backgroundImage;
+			backgroundStyle.backgroundImage = this.props.backgroundImage;
 		}
 		return (
 			<div className="input-text-wrapper">
 				<div style={style} className={this.props.fontColorStyle !== "normal" ? "background-font" : ""}>
-					<div style={beforeStyle} className="before"></div>
+					<div style={backgroundStyle} className="text-background"></div>
+					<div style={{textShadow : textShadow, padding : style.padding}} className="text-shadow editable">{this.props.text}</div>
 					<ContentEditable className="editable" ref={this.textField} onChange={this.props.handleTextChange} html={this.props.text} />
 				</div>
 			</div>
@@ -823,7 +927,9 @@ class ColorStylePicker extends React.Component {
 				<div>
 					<input id="color-style-image" hidden type="file" name={this.props.image.property} accept = "image/*" onChange={this.props.handleClick} />
 					<label htmlFor="color-style-image" className="font-image pointer">
-						<div className="image-button" style={{backgroundImage : this.props.image.value}}/>
+						<div className="image-button" style={{backgroundImage : this.props.image.value}}>
+							<div className="edit-icon"></div>
+						</div>
 					</label>
 				</div>
 			}
@@ -927,7 +1033,7 @@ class RangeComponent extends React.Component {
 		return (
 			<div className="range-container">
 				<div className="range-label">{this.props.label}</div>
-				<input type="range" name={this.props.name} data-prop={this.props.property} value={this.props.value} min={this.props.min} max={this.props.max} onChange={this.props.handleChange} />
+				<input type="range" name={this.props.name} data-prop={this.props.property} value={this.props.value} min={this.props.min} max={this.props.max} step={this.props.step ? this.props.step : "1"} onChange={this.props.handleChange} />
 				<div className="range-value">{this.props.convertToPercent ? value + this.props.suffix : this.props.value + this.props.suffix}</div>
 			</div>
 		);
@@ -961,32 +1067,56 @@ function mergeFilterStyle(data) {
 	return [blur, brightness, contrast, grayscale, hueRotate, invert, opacity, saturate, sepia, dropShadow].join(" ");
 }
 
-class ImageFilterComponent extends React.Component {
+function mergeCropStyle(crop) {
+	return "-"+crop.top+" -"+crop.right+" -"+crop.bottom+" -"+crop.left;
+}
+
+class ImageConfigComponent extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			crop : {},
+			filter : {},
+			selectedOption : "size-config",
+			selectedFilter : "blur",
+			selectedCrop : "",
+			currX : 0,
+			currY : 0,
+			prevX : 0,
+			prevY : 0
+		};
 		if(props.data) {
-			Object.assign(this.state, props.data.filter);
+			Object.assign(this.state.filter, props.data.filter);
+			Object.assign(this.state.crop, props.data.crop);
 		}
-		this.state.selectedOption = "";
 		this.handleChange = this.handleChange.bind(this);
 		this.handleClick = this.handleClick.bind(this);
+		
+		this.container = React.createRef();
+		this.image = React.createRef();
+		this.handleMouseDown = this.handleMouseDown.bind(this);
+		this.handleDrag = this.handleDrag.bind(this);
+		this.handleMouseUp = this.handleMouseUp.bind(this);
 	}
 	
 	handleClick(event) {
 		if(event.currentTarget.dataset.name === "ok") {
 			let data = copyOf(this.props.data);
-			data.filter = this.state;
+			data.filter = this.state.filter;
+			data.crop = this.state.crop;
 			this.props.onSave(data);
 		}else if(event.currentTarget.dataset.name === "cancel") {
 			this.props.onSave();
-		}else{
-			this.setState({ selectedOption : event.currentTarget.dataset.name });
+		}else if(event.currentTarget.dataset.name === "selectedOption") {
+			this.setState({ selectedOption : event.currentTarget.dataset.value });
+		}else if(event.currentTarget.dataset.name === "selectedFilter") {
+			this.setState({ selectedFilter : event.currentTarget.dataset.value });
 		}
 	}
 	
 	handleChange(event) {
-		if(event.currentTarget.name === "style") {
+		if(event.currentTarget.name === "filter") {
+			let filter = copyOf(this.state.filter);
 			let property = event.currentTarget.dataset.prop;
 			let value = event.currentTarget.value;
 			if(property === "blur") {
@@ -1000,21 +1130,54 @@ class ImageFilterComponent extends React.Component {
 			}else{
 				value += "%";
 			}
-			this.setState({ [property] : value});
+			filter[property] = value;
+			this.setState({ filter : filter });
 		}
 	}
 	
+	handleMouseDown(event) {
+		this.container.current.onmouseup = this.handleMouseUp;
+		this.container.current.onmousemove = this.handleDrag;
+		this.container.current.ontouchend = this.handleMouseUp;
+		this.container.current.ontouchmove = this.handleDrag;
+		let selectedCrop = event.currentTarget.dataset.prop;
+		if(event.type === "touchstart" && event.touches.length === 1) {
+			event = event.touches[0] || event.changedTouches[0];
+		}
+		this.setState({ selectedCrop : selectedCrop, prevX : event.clientX, prevY : event.clientY});
+	}
+	
+	handleDrag(event) {
+		var prop = event.currentTarget.dataset.prop;
+		if(event.type === "touchmove" && event.touches.length === 1) {
+			event = event.touches[0] || event.changedTouches[0];
+		}
+		let currX = this.state.prevX - event.clientX;
+		let currY = this.state.prevY - event.clientY;
+		let prevX = event.clientX;
+		let prevY = event.clientY;
+		let crop = copyOf(this.state.crop);
+		if(this.state.selectedCrop === "left") {
+			crop.left = (this.image.current.offsetLeft - currX) + "px";
+		}else if(this.state.selectedCrop === "top") {
+			crop.top = (this.image.current.offsetTop - currY) + "px";
+		}else if(this.state.selectedCrop === "right") {
+			crop.right = parseFloat(this.state.crop.right) + currX + "px";
+		}else if(this.state.selectedCrop === "bottom") {
+			crop.bottom = parseFloat(this.state.crop.bottom) + currY + "px";
+		}
+		this.setState({crop : crop, currX : currX, currY : currY, prevX : prevX, prevY : prevY});
+	}
+	
+	handleMouseUp(event) {
+		this.container.current.onmouseup = null;
+		this.container.current.onmousemove = null;
+		this.container.current.ontouchend = null;
+		this.container.current.ontouchmove = null;
+		this.setState({ selectedCrop : "" });
+	}
+	
 	render() {
-		let rangeConfig = this.state.selectedOption ? IMAGE_FILTER_CONFIG[this.state.selectedOption] : {};
-		let rangeValue = this.state.selectedOption ? parseInt(this.state[this.state.selectedOption]) : 0;
-		let thumbnailConfig = Object.keys(IMAGE_FILTER_CONFIG).map((filter) => {
-			return (
-				<div className={filter === this.state.selectedOption ? "image-thumbnail selected" : "image-thumbnail" } key={filter} data-name={filter} onClick={this.handleClick}>
-					<img src={this.props.data.image} style={IMAGE_FILTER_CONFIG[filter].style} alt="error"/>
-					<div>{IMAGE_FILTER_CONFIG[filter].label}</div>
-				</div>
-			);
-		});
 		return (
 			<div className="overlay">
 				<button data-name="ok" className="absolute top-margin right-margin round-button" onClick={this.handleClick}>
@@ -1023,15 +1186,51 @@ class ImageFilterComponent extends React.Component {
 				<button data-name="cancel" className="absolute top-margin left-margin round-button" onClick={this.handleClick}>
 					<div className="cancel-icon"></div>
 				</button>
-				<img className="main-image-filter" src={this.props.data.image} alt="error" style={{filter : mergeFilterStyle(this.state)}}/>
-				<div className="image-filter-config-container">
-					{this.state.selectedOption && <RangeComponent name="style" property={this.state.selectedOption} label={rangeConfig.label} value={rangeValue} convertToPercent="true" suffix="%" min={rangeConfig.min} max={rangeConfig.max} handleChange={this.handleChange} /> }
-					<div className="image-thumbnail-container">
-						{thumbnailConfig}
+				{ this.state.selectedOption === "size-config" ? 
+					<div className="main-image-filter" ref={this.container}>
+						<img src={this.props.data.image} alt="error" style={{filter : mergeFilterStyle(this.state.filter)}}/>
+						<div className="image-crop-overlay"></div>
+						<div className="image-crop-view" style={this.state.crop} ref={this.image}>
+							<img src={this.props.data.image} alt="error" style={{filter : mergeFilterStyle(this.state.filter), margin : mergeCropStyle(this.state.crop)}}/>
+							<div className="absolute image-horizontal-grid"></div>
+							<div className="absolute image-vertical-grid"></div>
+							<div data-prop="left" className="absolute image-crop-left" onMouseDown={this.handleMouseDown} onTouchStart={this.handleMouseDown}></div>
+							<div data-prop="top" className="absolute image-crop-top" onMouseDown={this.handleMouseDown} onTouchStart={this.handleMouseDown}></div>
+							<div data-prop="right" className="absolute image-crop-right" onMouseDown={this.handleMouseDown} onTouchStart={this.handleMouseDown}></div>
+							<div data-prop="bottom" className="absolute image-crop-bottom" onMouseDown={this.handleMouseDown} onTouchStart={this.handleMouseDown}></div>
+						</div>
+					</div> :
+					<div className="main-image-filter overflow-hidden">
+						<img src={this.props.data.image} alt="error" style={{filter : mergeFilterStyle(this.state.filter), margin : mergeCropStyle(this.state.crop)}}/>
+					</div>
+				}
+				<div className="config-background config-container">
+					{ this.state.selectedOption === "filter-config" && <ImageFilterComponent image={this.props.data.image} selectedFilter={this.state.selectedFilter} value={this.state.filter[this.state.selectedFilter]} handleClick={this.handleClick} handleChange={this.handleChange} /> }
+					<div className="config-menu-container">
+						<div data-name="selectedOption" data-value="size-config" className={this.state.selectedOption === "size-config" ? "selected" : ""} onClick={this.handleClick}>Size</div>
+						<div data-name="selectedOption" data-value="filter-config" className={this.state.selectedOption === "filter-config" ? "selected" : ""} onClick={this.handleClick}>Filter</div>
 					</div>
 				</div>
 			</div>
 		);
+	}
+}
+
+class ImageFilterComponent extends React.Component {
+	render() {
+		let rangeConfig = IMAGE_FILTER_CONFIG[this.props.selectedFilter];
+		let thumbnailConfig = Object.keys(IMAGE_FILTER_CONFIG).map((filter) => {
+			return (
+				<div className={filter === this.props.selectedFilter ? "image-thumbnail selected" : "image-thumbnail" } key={filter} data-name="selectedFilter" data-value={filter} onClick={this.props.handleClick}>
+					<img src={this.props.image} style={IMAGE_FILTER_CONFIG[filter].style} alt="error"/>
+					<div>{IMAGE_FILTER_CONFIG[filter].label}</div>
+				</div>
+			);
+		});
+		return (<>
+			<RangeComponent name="filter" property={this.props.selectedFilter} label={rangeConfig.label} value={parseInt(this.props.value)} convertToPercent="true" suffix="%" min={rangeConfig.min} max={rangeConfig.max} handleChange={this.props.handleChange} />
+			<div className="image-thumbnail-container"> {thumbnailConfig} </div>
+		</>);
 	}
 }
 

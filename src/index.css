@@ -11,12 +11,11 @@ body {
 	scrollbar-width: none;
     -ms-overflow-style: none;
 }
-div.editable {
+.editable {
 	background: transparent;
     outline: none;
     border: none;
-	text-align: center;
-	font-size: 20px;
+	font-size: 30px;
 	max-width: 90vw;
 }
 .absolute {
@@ -36,6 +35,9 @@ div.editable {
 }
 .right-margin {
 	right: 10px;
+}
+.overflow-hidden {
+	overflow: hidden;
 }
 .background-size {
 	left: 50%;
@@ -63,6 +65,7 @@ div.editable {
 	display: flex;
     justify-content: center;
     align-items: center;
+	flex-direction: column;
 	margin: auto;
 }
 .greeting-background {
@@ -94,7 +97,7 @@ div.editable {
     border-style: solid;
 }
 .overlay {
-	background: rgba(0, 0, 0, 0.2);
+	background: rgba(0, 0, 0, 0.7);
     top: 0px;
     left: 0px;
     position: fixed;
@@ -307,6 +310,20 @@ div.editable {
 .draggable {
 	cursor: grab;
 }
+.draggable img {
+	display: block;
+}
+.draggable-selected .selected-overlay {
+	position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+	z-index: 0;
+	opacity: 0.5;
+    background-color: rgb(187, 222, 251);
+    border: 2px solid rgb(66, 165, 245);
+}
 .draggable.grabbing {
 	cursor: grabbing;
 }
@@ -350,6 +367,7 @@ div.editable {
 }
 .color-style-button .color-button {
 	background-size: cover;
+	background-position: center;
 	width: 15px;
     height: 15px;
     border-radius: 50%;
@@ -363,15 +381,23 @@ div.editable {
     border-radius: 5px;
     margin: 5px auto;
 }
-.before {
+.text-background {
+	position : absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: -2;
+	background-size: cover;
+    background-position: center;
+}
+.text-shadow {
 	position : absolute;
 	top: 0;
 	bottom: 0;
 	left: 0;
 	right: 0;
 	z-index: -1;
-	background-size: cover;
-    background-position: center;
 }
 .background-font {
 	background-size: cover;
@@ -379,25 +405,26 @@ div.editable {
     -webkit-text-fill-color: transparent;
 }
 .image-button {
+	position: relative;
+	background-size: 100% 100%;
 	width: 50px;
     height: 50px;
 }
-.main-image-filter{
+.image-button .edit-icon {
 	position: absolute;
-    top: calc(50% - 75px);
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) scale(1.5);
+	opacity: 0.5;
+}
+.main-image-filter {
+	position: absolute;
+    top: calc(50% - 110px);
     left: 50%;
     transform: translate(-50%, -50%);
-	height: 50vh;
 }
-.image-filter-config-container {
-	position: fixed;
-	text-align: center;
-	bottom: 0px;
-	left: 0px;
-	right: 0px;
-	padding-top: 5px;
-    background: #555555;
-    color: rgba(255, 255, 255, 0.5);
+.draggable img, .main-image-filter img {
+	height: 50vh;
 }
 .image-thumbnail-container {
 	white-space: nowrap;
@@ -420,4 +447,91 @@ div.editable {
 }
 .image-thumbnail div{
 	display: block;
+}
+[class*="dotted-line"] {
+	position: absolute;
+	z-index: 1;
+	text-align: center;
+    font-size: 12px;
+}
+.left-dotted-line {
+	left: 0px;
+    border-top: 2px dotted #000000;
+}
+.top-dotted-line {
+	top: 0px;
+    border-left: 2px dotted #000000;
+}
+.right-dotted-line {
+	right: 0px;
+    border-top: 2px dotted #000000;
+}
+.bottom-dotted-line {
+	bottom: 0px;
+    border-left: 2px dotted #000000;
+}
+.top-dotted-line div, .bottom-dotted-line div {
+	display: flex;
+	height: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.image-crop-overlay {
+	position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+.image-crop-view {
+	position: absolute;
+    overflow: hidden;
+	border: 1px solid rgb(66, 165, 245);
+    box-sizing: border-box;
+}
+.image-horizontal-grid {
+	background-color: transparent;
+    border-bottom: 1px dashed #FFF;
+    border-top: 1px dashed #FFF;
+    left: 0;
+    top: 33.3%;
+	width: 100%;
+    height: 33.3%;
+}
+.image-vertical-grid {
+	background-color: transparent;
+    border-left: 1px dashed #FFF;
+    border-right: 1px dashed #FFF;
+    left: 33.3%;
+    top: 0;
+    width: 33.3%;
+	height: 100%;
+}
+.image-crop-left {
+	height: 100%;
+	width: 2px;
+	top: 0;
+	left: 0;
+	cursor: e-resize;
+}
+.image-crop-top {
+	width: 100%;
+	height: 2px;
+	top: 0;
+	cursor: n-resize;
+}
+.image-crop-right {
+	height: 100%;
+	width: 2px;
+	top: 0;
+	right: 0;
+	cursor: e-resize;
+}
+.image-crop-bottom {
+	width: 100%;
+	height: 2px;
+	bottom: 0;
+	cursor: n-resize;
 }
