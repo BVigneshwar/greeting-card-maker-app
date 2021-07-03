@@ -4,6 +4,15 @@ html, body {
 	overflow: hidden
 }
 body ::-webkit-scrollbar { display: none; -webkit-appearance: none; }
+img::selection {
+    background: transparent;
+}
+input, div, button {
+  -webkit-tap-highlight-color: transparent;
+}
+img {
+	pointer-events: none
+}
 body {
 	background-color: #F1F1F1;
 	margin: 0px;
@@ -46,7 +55,7 @@ body {
     font-weight: bold;
     margin-top: 5px;
     padding: 10px;
-    background-image: linear-gradient(#9575CD, #4DD0E1);
+    background-image: linear-gradient(#B39DDB, #80DEEA);
     box-shadow: 2px 2px 4px #555555;
     border-radius: 20px;
 }
@@ -74,7 +83,7 @@ body {
 .round-button {
 	padding: 8px;
     border-radius: 50%;
-    background-image: linear-gradient(#9575CD, #4DD0E1);
+	background-image: linear-gradient(#B39DDB, #80DEEA);
     box-shadow: 2px 2px 4px #555555;
 	border: none;
     outline: none;
@@ -142,6 +151,9 @@ body {
 	border-bottom: 3px solid #FFFFFF;
 }
 .font-picker-container {
+	display: inline-block;
+    vertical-align: middle;
+	width: calc(100% - 70px);
 	font-size: 20px;
 	white-space: nowrap;
     overflow-x: auto;
@@ -158,10 +170,10 @@ body {
 	border: 1px solid rgba(255, 255, 255, 1);
 }
 .range-container {
-	width: 100%;
+	width: calc(100% - 40px);
     display: flex;
     flex-direction: row;
-	margin: 10px 20px;
+	margin: 20px;
 }
 .range-label {
 	flex-grow: 1;
@@ -224,7 +236,7 @@ body {
     background-position: center;
     background-size: contain;
 }
-.save-icon {
+.screenshot-icon {
 	width: 25px;
     height: 25px;
     background-image: url("./icons/save-icon.png");
@@ -313,6 +325,10 @@ body {
 .draggable img {
 	display: block;
 }
+.draggable-selected {
+	background-color: #FFFFFF;
+	z-index: 2;
+}
 .draggable-selected .selected-overlay {
 	position: absolute;
     top: 0;
@@ -333,7 +349,7 @@ body {
 .color-picker-container {
 	display: inline-block;
     vertical-align: middle;
-	width: calc(100% - 100px);
+	width: calc(100% - 70px);
     white-space: nowrap;
     overflow-x: auto;
     margin: auto;
@@ -423,8 +439,9 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
 }
-.draggable img, .main-image-filter img {
-	height: 50vh;
+.main-image-filter img {
+	display: block;
+	width: 50vmin;
 }
 .image-thumbnail-container {
 	white-space: nowrap;
@@ -511,27 +528,41 @@ body {
 }
 .image-crop-left {
 	height: 100%;
-	width: 2px;
+	width: 15px;
 	top: 0;
-	left: 0;
+	left: -5px;
 	cursor: e-resize;
 }
 .image-crop-top {
 	width: 100%;
-	height: 2px;
-	top: 0;
+	height: 15px;
+	top: -5px;
 	cursor: n-resize;
 }
 .image-crop-right {
 	height: 100%;
-	width: 2px;
+	width: 15px;
 	top: 0;
-	right: 0;
+	right: -5px;
 	cursor: e-resize;
 }
 .image-crop-bottom {
 	width: 100%;
-	height: 2px;
-	bottom: 0;
+	height: 15px;
+	bottom: -5px;
 	cursor: n-resize;
+}
+.image-drag {
+	top: 10px;
+	bottom: 10px;
+	left: 10px;
+	right: 10px;
+}
+.screenshot-mode button, .screenshot-mode .background-size, .screenshot-mode .round-button{
+	display: none;
+}
+@media (pointer: coarse) {
+    .draggable-config-container .range-container:first-child{
+		display: none;
+	}
 }
