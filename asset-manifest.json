@@ -1,23 +1,23 @@
 {
   "files": {
-    "main.css": "/greeting-card-maker-app/static/css/main.aa9e17fa.chunk.css",
-    "main.js": "/greeting-card-maker-app/static/js/main.68b7a7a7.chunk.js",
-    "main.js.map": "/greeting-card-maker-app/static/js/main.68b7a7a7.chunk.js.map",
+    "main.css": "/greeting-card-maker-app/static/css/main.e6b2104a.chunk.css",
+    "main.js": "/greeting-card-maker-app/static/js/main.c6d77a7b.chunk.js",
+    "main.js.map": "/greeting-card-maker-app/static/js/main.c6d77a7b.chunk.js.map",
     "runtime-main.js": "/greeting-card-maker-app/static/js/runtime-main.58f456f6.js",
     "runtime-main.js.map": "/greeting-card-maker-app/static/js/runtime-main.58f456f6.js.map",
-    "static/js/2.81e7436f.chunk.js": "/greeting-card-maker-app/static/js/2.81e7436f.chunk.js",
-    "static/js/2.81e7436f.chunk.js.map": "/greeting-card-maker-app/static/js/2.81e7436f.chunk.js.map",
+    "static/js/2.d30d3b95.chunk.js": "/greeting-card-maker-app/static/js/2.d30d3b95.chunk.js",
+    "static/js/2.d30d3b95.chunk.js.map": "/greeting-card-maker-app/static/js/2.d30d3b95.chunk.js.map",
     "static/js/3.77649c41.chunk.js": "/greeting-card-maker-app/static/js/3.77649c41.chunk.js",
     "static/js/3.77649c41.chunk.js.map": "/greeting-card-maker-app/static/js/3.77649c41.chunk.js.map",
     "index.html": "/greeting-card-maker-app/index.html",
-    "static/css/main.aa9e17fa.chunk.css.map": "/greeting-card-maker-app/static/css/main.aa9e17fa.chunk.css.map",
-    "static/js/2.81e7436f.chunk.js.LICENSE.txt": "/greeting-card-maker-app/static/js/2.81e7436f.chunk.js.LICENSE.txt",
+    "static/css/main.e6b2104a.chunk.css.map": "/greeting-card-maker-app/static/css/main.e6b2104a.chunk.css.map",
+    "static/js/2.d30d3b95.chunk.js.LICENSE.txt": "/greeting-card-maker-app/static/js/2.d30d3b95.chunk.js.LICENSE.txt",
     "static/media/index.css": "/greeting-card-maker-app/static/media/right-scroll.3e39f868.png"
   },
   "entrypoints": [
     "static/js/runtime-main.58f456f6.js",
-    "static/js/2.81e7436f.chunk.js",
-    "static/css/main.aa9e17fa.chunk.css",
-    "static/js/main.68b7a7a7.chunk.js"
+    "static/js/2.d30d3b95.chunk.js",
+    "static/css/main.e6b2104a.chunk.css",
+    "static/js/main.c6d77a7b.chunk.js"
   ]
 }
